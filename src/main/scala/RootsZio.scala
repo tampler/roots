@@ -7,7 +7,7 @@ import zio.console.{ putStrLn }
 import HelperZio._
 
 object RootsZio extends zio.App {
-  override def run(args: List[String]) = (eff0 <*> eff1).exitCode
+  override def run(args: List[String]) = (eff0 <*> eff1 <*> eff2).exitCode
 
   def program(min: Int, max: Int) =
     for {
@@ -16,14 +16,15 @@ object RootsZio extends zio.App {
       _    <- putStrLn(out.toString)
     } yield out
 
-  val eff0 = program(10, 20)     // 2
-  val eff1 = program(6000, 7000) // 3
+  val eff0 = program(10, 20)       // 2
+  val eff1 = program(6000, 7000)   // 3
+  val eff2 = program(2, 1e9.toInt) // OOM: Java Heap on store result array
 
 }
 
 object HelperZio {
 
-  // Trampoline and tail recursion is not required here, since ZIO Streams are lazily evaluated
+  // Trampoline and tail recursion are not required here, since ZIO Streams are lazily evaluated
   def getDepth(din: Int, depth: Int): Int =
     if (din == 1) 0
     else {
@@ -35,8 +36,8 @@ object HelperZio {
       }
     }
 
-  def solution(min: Int, max: Int): UIO[List[Int]] = {
-    def inner(): UIO[List[Int]] = Stream.fromIterable(Range(min, max)).map(getDepth(_, 0)).runCollect
+  def solution(min: Int, max: Int) = {
+    def inner() = Stream.fromIterator(Range(min, max).iterator).map(getDepth(_, 0)).runCollect
 
     if (min > max || min < 2 || max > 1e9) UIO(List[Int](0)) else inner()
   }

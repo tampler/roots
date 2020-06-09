@@ -32,6 +32,7 @@ object Roots extends App {
 
   println(program(2, 2))       // 0
   println(program(6000, 7000)) // 3
+  println(program(2, 700000))  // OOM : Java heap on calculations
 
 }
 
