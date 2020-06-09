@@ -1,10 +1,10 @@
 package hello
 
-import zio.stream._
+import zio.{ UIO }
+import zio.stream.Stream
 import zio.console.{ putStrLn }
 
 import HelperZio._
-import zio.{ UIO }
 
 object RootsZio extends zio.App {
   override def run(args: List[String]) = (eff0 <*> eff1).exitCode
@@ -38,6 +38,6 @@ object HelperZio {
   def solution(min: Int, max: Int): UIO[List[Int]] = {
     def inner(): UIO[List[Int]] = Stream.fromIterable(Range(min, max)).map(getDepth(_, 0)).runCollect
 
-    if (min < 2 || max > 1e9) UIO(List[Int](0)) else inner()
+    if (min > max || min < 2 || max > 1e9) UIO(List[Int](0)) else inner()
   }
 }

@@ -21,7 +21,7 @@ object RootLike {
         rangeDepths.max
 
       }
-      if (min < 2 || max > 1e9) 0 else inner()
+      if (min > max || min < 2 || max > 1e9) 0 else inner()
     }
 
   }
@@ -30,7 +30,7 @@ object RootLike {
 object Roots extends App {
   def program(min: Int, max: Int) = RootLike[Int].solution(min, max)
 
-  println(program(10, 20)) // 2
+  println(program(10, 20))     // 2
   println(program(6000, 7000)) // 3
 
 }
