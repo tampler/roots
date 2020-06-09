@@ -18,7 +18,7 @@ object RootLike {
 
         // This can be parallelized
         val rangeDepths = range.map(getDepth(_, 0))
-        rangeDepths.max
+        if (rangeDepths.isEmpty) 0 else rangeDepths.max
 
       }
       if (min > max || min < 2 || max > 1e9) 0 else inner()
@@ -30,7 +30,7 @@ object RootLike {
 object Roots extends App {
   def program(min: Int, max: Int) = RootLike[Int].solution(min, max)
 
-  println(program(10, 20))     // 2
+  println(program(2, 2))       // 0
   println(program(6000, 7000)) // 3
 
 }

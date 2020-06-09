@@ -12,7 +12,7 @@ object RootsZio extends zio.App {
   def program(min: Int, max: Int) =
     for {
       resp <- solution(min, max)
-      out  = resp.max
+      out  = if (resp.isEmpty) 0 else resp.max
       _    <- putStrLn(out.toString)
     } yield out
 
