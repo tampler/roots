@@ -7,7 +7,7 @@ import HelperZio._
 import zio.{ UIO }
 
 object RootsZio extends zio.App {
-  override def run(args: List[String]) = eff0.exitCode
+  override def run(args: List[String]) = (eff0 <*> eff1).exitCode
 
   def program(min: Int, max: Int) =
     for {
@@ -16,7 +16,7 @@ object RootsZio extends zio.App {
       _    <- putStrLn(out.toString)
     } yield out
 
-  val eff0 = program(10, 20) // 2
+  val eff0 = program(10, 20)     // 2
   val eff1 = program(6000, 7000) // 3
 
 }
