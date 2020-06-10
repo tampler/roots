@@ -18,13 +18,13 @@ object Tree {
 
     }
 
-    // def put(t: BinTree[A], v: Node[A]): BinTree[A] = t match {
-    //   case Empty => new Node(v, Empty, Empty)
-    //   case Node(elem: Node[A], left: BinTree[A], right: BinTree[A]) => {
-    //     if (v < elem) new Node(elem, put(left, v), right)
-    //     else new Node[A](elem, left, put(right, v))
-    //   }
-    // }
+    def put[B >: A](n: B, tree: BinTree[B])(implicit ev: Ordering[B]): BinTree[B] = tree match {
+      case Empty => new Node(n, Empty, Empty)
+      case Node(elem, left: BinTree[B], right: BinTree[B]) => {
+        if (ev.lt(elem, n)) new Node(elem, put(n, left), right)
+        else new Node(elem, left, put(n, right))
+      }
+    }
 
     def get: Option[A] = this match {
       case n: Node[A] => Some(n.v)
@@ -49,11 +49,18 @@ object Test extends App {
     case Node(value, l, r) => f2(value, fold(f1)(f2)(l), fold(f1)(f2)(r)) //post order
   }
 
-  val n0 = Node(1, Leaf(2), Node(3, Leaf(5), Node(4, Leaf(42), Leaf(50))))
+  val dummyTree = Node(1, Leaf(2), Node(3, Leaf(5), Node(4, Leaf(42), Leaf(50))))
 
-  println(fold(identity[Int])(_ + _ + _)(n0)) // 107
+  println(fold(identity[Int])(_ + _ + _)(dummyTree)) // 107
 
   val inputTree = Node(33, Node(12, Leaf(5), Leaf(20)), Node(45, Leaf(39), Leaf(50)))
 
   println(fold(identity[Int])(_ + _ + _)(inputTree)) // 204
+
+  val newTree = new BinTree[Int] {}
+  val list    = List(33, 12, 5)
+  println(list.foreach(newTree.put(_, newTree)))
+
+  // println(newTree)
+
 }
