@@ -2,7 +2,7 @@
 -Djava.awt.headless=true
 -XX:MaxMetaspaceSize=1g
 -XX:+CMSClassUnloadingEnabled
--XX:+HeapDumpOnOutOfMemoryError
+#-XX:+HeapDumpOnOutOfMemoryError
 -Xss8M
 -Xms3G
 -Xmx4G
