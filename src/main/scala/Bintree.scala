@@ -6,32 +6,18 @@ object Tree {
 
   trait BinTree[+A] {
 
-    def left(): Option[BinTree[A]] = this match {
-      case n: Node[A] => Some(n.l)
-      case l: Leaf[A] => None
-      case Empty      => None
-    }
-    def right(): Option[BinTree[A]] = this match {
-      case n: Node[A] => Some(n.r)
-      case l: Leaf[A] => None
-      case Empty      => None
-
-    }
-
     def put[B >: A](n: B, tree: BinTree[B])(implicit ev: Ordering[B]): BinTree[B] = tree match {
-      case Empty => new Node(n, Empty, Empty)
+      case Empty   => new Node(n, Empty, Empty)
+      case Leaf(v) => new Node(v, Empty, Empty)
       case Node(elem, left: BinTree[B], right: BinTree[B]) => {
         if (ev.lt(elem, n)) new Node(elem, put(n, left), right)
         else new Node(elem, left, put(n, right))
       }
     }
 
-    def get: Option[A] = this match {
-      case n: Node[A] => Some(n.v)
-      case l: Leaf[A] => Some(l.v)
-      case Empty      => None
-    }
-
+  }
+  object BinTree {
+    def apply[A] = new BinTree[A] {}
   }
 
   case class Node[A](v: A, l: BinTree[A], r: BinTree[A]) extends BinTree[A]
@@ -45,6 +31,7 @@ object Test extends App {
   val tree = new BinTree[Int] {}
 
   def fold[A, B](f1: A => B)(f2: (A, B, B) => B)(t: BinTree[A]): B = t match {
+    case Empty             => 0.asInstanceOf[B]
     case Leaf(value)       => f1(value)
     case Node(value, l, r) => f2(value, fold(f1)(f2)(l), fold(f1)(f2)(r)) //post order
   }
@@ -57,10 +44,12 @@ object Test extends App {
 
   println(fold(identity[Int])(_ + _ + _)(inputTree)) // 204
 
-  val newTree = new BinTree[Int] {}
-  val list    = List(33, 12, 5)
-  println(list.foreach(newTree.put(_, newTree)))
+  val list = List(33, 12, 5, 20, 45, 39, 50)
+  // Init tree
+  val res = list.foldLeft(BinTree[Int].put(0, Leaf(0)))((a, b) => a.put(b, a))
+  println(res)
 
-  // println(newTree)
+  // Fold tree
+  println(fold(identity[Int])(_ + _ + _)(res)) // 204
 
 }
